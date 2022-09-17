@@ -11,6 +11,7 @@
 
 <img width="490" alt="スクリーンショット 2022-09-17 21 05 12" src="https://user-images.githubusercontent.com/47273077/190855767-8a84487d-4604-4255-8648-bb90a05c05ad.png">
 
+### 1. Dummy Data
 ApiController
 ```swift
     
@@ -42,3 +43,31 @@ ViewController
             })
             .disposed(by: bag)
 ```
+
+### 2. Real Data
+<img width="490" alt="スクリーンショット 2022-09-17 21 14 15" src="https://user-images.githubusercontent.com/47273077/190856192-aa552cb4-5703-4b2c-bb25-fe14704eab49.png">
+
+ViewController
+```swift
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        searchCityName.rx.text.orEmpty
+          .filter { !$0.isEmpty }
+          .flatMap { text in
+            ApiController.shared
+              .currentWeather(for: text)
+              .catchErrorJustReturn(.empty)
+          }
+          .observeOn(MainScheduler.instance)
+          .subscribe(onNext: { data in
+              self.tempLabel.text = "\(data.temperature)° C"
+              self.iconLabel.text = data.icon
+              self.humidityLabel.text = "\(data.humidity)%"
+              self.cityNameLabel.text = data.cityName
+          })
+          .disposed(by: bag)
+          
+```
+
+
