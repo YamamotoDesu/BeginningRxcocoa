@@ -118,3 +118,5 @@ ViewController
 --------
 
 ## Binding observables
+
+![image](https://user-images.githubusercontent.com/47273077/190857849-1d3e551f-e8cb-457d-95ea-238223cd8376.png)
