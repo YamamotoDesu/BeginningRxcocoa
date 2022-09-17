@@ -154,4 +154,46 @@ ViewController
           .disposed(by: bag)
 ```
 
+-----------
+
 ## Improving the code with Traits
+
+### Improving the project with Driver and ControlProperty
+
+```swift
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+//        let search = searchCityName.rx.text.orEmpty
+        let search = searchCityName.rx
+          .controlEvent(.editingDidEndOnExit)
+          .map { self.searchCityName.text ?? "" }
+          .filter { !$0.isEmpty }
+          .flatMapLatest { text in
+            ApiController.shared
+              .currentWeather(for: text)
+              .catchErrorJustReturn(.empty)
+          }
+          .asDriver(onErrorJustReturn: .empty)
+
+
+        search.map { "\($0.temperature)° C" }
+          .drive(tempLabel.rx.text)
+          .disposed(by: bag)
+
+        search.map(\.icon)
+          .drive(iconLabel.rx.text)
+          .disposed(by: bag)
+
+        search.map { "\($0.humidity)%" }
+          .drive(humidityLabel.rx.text)
+          .disposed(by: bag)
+        search.map(\.cityName)
+          .drive(cityNameLabel.rx.text)
+          .disposed(by: bag)
+          
+```
+
+![image](https://user-images.githubusercontent.com/47273077/190879682-513ad2fb-c816-4b0c-be45-e08e575c8b81.png)
+
+
