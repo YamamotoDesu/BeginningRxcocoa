@@ -115,3 +115,6 @@ ViewController
 
 
 
+--------
+
+## Binding observables
