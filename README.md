@@ -158,6 +158,8 @@ ViewController
 
 ## Improving the code with Traits
 
+![image](https://user-images.githubusercontent.com/47273077/190879718-9312cb6d-3ec3-4cb2-9d75-2cc794986067.png)
+
 ### Improving the project with Driver and ControlProperty
 
 ```swift
