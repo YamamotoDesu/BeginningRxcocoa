@@ -40,4 +40,5 @@ ViewController
                 self.humidityLabel.text = "\(data.humidity)%"
                 self.cityNameLabel.text = data.cityName
             })
+            .disposed(by: bag)
 ```
