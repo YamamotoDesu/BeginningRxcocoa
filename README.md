@@ -153,3 +153,5 @@ ViewController
           .bind(to: cityNameLabel.rx.text)
           .disposed(by: bag)
 ```
+
+## Improving the code with Traits
