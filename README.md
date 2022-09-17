@@ -45,7 +45,48 @@ ViewController
 ```
 
 ### 2. Real Data
-<img width="490" alt="スクリーンショット 2022-09-17 21 14 15" src="https://user-images.githubusercontent.com/47273077/190856192-aa552cb4-5703-4b2c-bb25-fe14704eab49.png">
+<img width="490" alt="スクリーンショット 2022-09-17 21 23 30" src="https://user-images.githubusercontent.com/47273077/190856519-c99f45b7-05d5-4db0-a3e2-825cdd62bf36.png">
+
+ApiController
+```swift
+  // MARK: - Api Calls
+  func currentWeather(for city: String) -> Observable<Weather> {
+    buildRequest(pathComponent: "weather", params: [("q", city)])
+      .map { data in
+        try JSONDecoder().decode(Weather.self, from: data)
+      }
+  }
+  
+    private func buildRequest(method: String = "GET", pathComponent: String, params: [(String, String)]) -> Observable<Data> {
+    let url = baseURL.appendingPathComponent(pathComponent)
+    var request = URLRequest(url: url)
+    let keyQueryItem = URLQueryItem(name: "appid", value: apiKey)
+    let unitsQueryItem = URLQueryItem(name: "units", value: "metric")
+    let urlComponents = NSURLComponents(url: url, resolvingAgainstBaseURL: true)!
+
+    if method == "GET" {
+      var queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }
+      queryItems.append(keyQueryItem)
+      queryItems.append(unitsQueryItem)
+      urlComponents.queryItems = queryItems
+    } else {
+      urlComponents.queryItems = [keyQueryItem, unitsQueryItem]
+
+      let jsonData = try! JSONSerialization.data(withJSONObject: params, options: .prettyPrinted)
+      request.httpBody = jsonData
+    }
+
+    request.url = urlComponents.url!
+    request.httpMethod = method
+
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+    let session = URLSession.shared
+
+    return session.rx.data(request: request)
+  }
+
+```
 
 ViewController
 ```swift
