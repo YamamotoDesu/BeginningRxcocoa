@@ -120,3 +120,36 @@ ViewController
 ## Binding observables
 
 ![image](https://user-images.githubusercontent.com/47273077/190857849-1d3e551f-e8cb-457d-95ea-238223cd8376.png)
+
+```swift
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+    let search = searchCityName.rx.text.orEmpty
+          .filter { !$0.isEmpty }
+          .flatMapLatest { text in // flatMapLatest will cancel any previous newtowork requests when a new one starts
+            ApiController.shared
+              .currentWeather(for: text)
+              .catchErrorJustReturn(.empty)
+          }
+          .share(replay: 1) // share makes your stream reusable and transforms a single use data source into a muti use Observable
+          .observeOn(MainScheduler.instance)
+
+
+        search.map { "\($0.temperature)° C" }
+          .bind(to: tempLabel.rx.text)
+          .disposed(by: bag)
+        
+        search.map(\.icon)
+          .bind(to: iconLabel.rx.text)
+          .disposed(by: bag)
+
+        search.map { "\($0.humidity)%" }
+          .bind(to: humidityLabel.rx.text)
+          .disposed(by: bag)
+
+        search.map(\.cityName)
+          .bind(to: cityNameLabel.rx.text)
+          .disposed(by: bag)
+```
